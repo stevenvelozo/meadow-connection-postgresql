@@ -1,0 +1,51 @@
+{
+  "name": "meadow-connection-postgresql",
+  "version": "1.0.0",
+  "description": "Meadow PostgreSQL Connection Plugin",
+  "main": "source/Meadow-Connection-PostgreSQL.js",
+  "scripts": {
+    "coverage": "npx quack coverage",
+    "test": "npx quack test"
+  },
+  "mocha": {
+    "diff": true,
+    "extension": [
+      "js"
+    ],
+    "package": "./package.json",
+    "reporter": "spec",
+    "slow": "75",
+    "timeout": "5000",
+    "ui": "tdd",
+    "watch-files": [
+      "source/**/*.js",
+      "test/**/*.js"
+    ],
+    "watch-ignore": [
+      "lib/vendor"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stevenvelozo/meadow-connection-postgresql.git"
+  },
+  "keywords": [
+    "meadow",
+    "postgresql",
+    "database"
+  ],
+  "author": "Steven Velozo <steven@velozo.com> (http://velozo.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stevenvelozo/meadow-connection-postgresql/issues"
+  },
+  "homepage": "https://github.com/stevenvelozo/meadow-connection-postgresql",
+  "devDependencies": {
+    "fable": "^3.1.55",
+    "quackage": "^1.0.58"
+  },
+  "dependencies": {
+    "fable-serviceproviderbase": "^3.0.18",
+    "pg": "^8.13.0"
+  }
+}
