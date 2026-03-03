@@ -1,11 +1,14 @@
 {
   "name": "meadow-connection-postgresql",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Meadow PostgreSQL Connection Plugin",
   "main": "source/Meadow-Connection-PostgreSQL.js",
   "scripts": {
     "coverage": "npx quack coverage",
-    "test": "npx quack test"
+    "test": "npx quack test",
+    "docker-postgresql-start": "bash ./start-postgresql.sh",
+    "docker-postgresql-stop": "bash ./stop-postgresql.sh",
+    "test-docker": "bash ./start-postgresql.sh && npm test; bash ./stop-postgresql.sh"
   },
   "mocha": {
     "diff": true,

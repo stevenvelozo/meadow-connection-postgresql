@@ -6,6 +6,8 @@ const libFableServiceProviderBase = require('fable-serviceproviderbase');
 
 const libPG = require('pg');
 
+const libMeadowSchemaPostgreSQL = require('./Meadow-Schema-PostgreSQL.js');
+
 class MeadowConnectionPostgreSQL extends libFableServiceProviderBase
 {
 	constructor(pFable, pManifest, pServiceHash)
@@ -66,128 +68,105 @@ class MeadowConnectionPostgreSQL extends libFableServiceProviderBase
 		this._ConnectionPool = false;
 		this.connected = false;
 
+		// Schema provider handles DDL operations (create, drop, index, etc.)
+		this._SchemaProvider = new libMeadowSchemaPostgreSQL(this.fable, this.options, `${this.Hash}-Schema`);
+
 		if (this.options.MeadowConnectionPostgreSQLAutoConnect)
 		{
 			this.connect();
 		}
 	}
 
+	get schemaProvider()
+	{
+		return this._SchemaProvider;
+	}
+
 	generateDropTableStatement(pTableName)
 	{
-		return `DROP TABLE IF EXISTS "${pTableName}";`;
+		return this._SchemaProvider.generateDropTableStatement(pTableName);
 	}
 
 	generateCreateTableStatement(pMeadowTableSchema)
 	{
-		this.log.info(`--> Building the table create string for ${pMeadowTableSchema} ...`);
-
-		let tmpPrimaryKey = false;
-		let tmpCreateTableStatement = `--   [ ${pMeadowTableSchema.TableName} ]`;
-
-		tmpCreateTableStatement += `\nCREATE TABLE IF NOT EXISTS\n    "${pMeadowTableSchema.TableName}"\n    (`;
-		for (let j = 0; j < pMeadowTableSchema.Columns.length; j++)
-		{
-			let tmpColumn = pMeadowTableSchema.Columns[j];
-
-			// If we aren't the first column, append a comma.
-			if (j > 0)
-			{
-				tmpCreateTableStatement += `,`;
-			}
-
-			tmpCreateTableStatement += `\n`;
-			// Dump out each column......
-			switch (tmpColumn.DataType)
-			{
-				case 'ID':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" SERIAL PRIMARY KEY`;
-					tmpPrimaryKey = tmpColumn.Column;
-					break;
-				case 'GUID':
-					let tmpSize = tmpColumn.hasOwnProperty('Size') ? tmpColumn.Size : 36;
-					if (isNaN(tmpSize))
-					{
-						// Use the old default if Size is improper
-						tmpSize = 36;
-					}
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" VARCHAR(${tmpSize}) DEFAULT '0xDe'`;
-					break;
-				case 'ForeignKey':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" INTEGER NOT NULL DEFAULT 0`;
-					break;
-				case 'Numeric':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" INTEGER NOT NULL DEFAULT 0`;
-					break;
-				case 'Decimal':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" DECIMAL(${tmpColumn.Size})`;
-					break;
-				case 'String':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" VARCHAR(${tmpColumn.Size}) NOT NULL DEFAULT ''`;
-					break;
-				case 'Text':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" TEXT`;
-					break;
-				case 'DateTime':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" TIMESTAMP`;
-					break;
-				case 'Boolean':
-					tmpCreateTableStatement += `        "${tmpColumn.Column}" BOOLEAN NOT NULL DEFAULT false`;
-					break;
-				default:
-					break;
-			}
-		}
-		// PostgreSQL SERIAL PRIMARY KEY is declared inline; no separate PRIMARY KEY clause needed
-		tmpCreateTableStatement += `\n    );`;
-
-		return tmpCreateTableStatement;
+		return this._SchemaProvider.generateCreateTableStatement(pMeadowTableSchema);
 	}
 
 	createTables(pMeadowSchema, fCallback)
 	{
-		this.fable.Utility.eachLimit(pMeadowSchema.Tables, 1,
-			(pTable, fCreateComplete) =>
-			{
-				return this.createTable(pTable, fCreateComplete);
-			},
-			(pCreateError) =>
-			{
-				if (pCreateError)
-				{
-					this.log.error(`Meadow-PostgreSQL Error creating tables from Schema: ${pCreateError}`, pCreateError);
-				}
-				this.log.info('Done creating tables!');
-				return fCallback(pCreateError);
-			});
+		return this._SchemaProvider.createTables(pMeadowSchema, fCallback);
 	}
 
 	createTable(pMeadowTableSchema, fCallback)
 	{
-		let tmpCreateTableStatement = this.generateCreateTableStatement(pMeadowTableSchema);
-		this._ConnectionPool.query(tmpCreateTableStatement,
-			(pError, pResult) =>
-			{
-				if (pError)
-				{
-					// Check for "already exists" type errors
-					if (pError.code === '42P07')
-					{
-						// 42P07 = duplicate_table
-						this.log.warn(`Meadow-PostgreSQL CREATE TABLE ${pMeadowTableSchema.TableName} executed but table already existed.`);
-						return fCallback();
-					}
-					else
-					{
-						this.log.error(`Meadow-PostgreSQL CREATE TABLE ${pMeadowTableSchema.TableName} failed!`, pError);
-						return fCallback(pError);
-					}
-				}
-				else
-				{
-					this.log.info(`Meadow-PostgreSQL CREATE TABLE ${pMeadowTableSchema.TableName} executed successfully.`);
-					return fCallback();
-				}
-			});
+		return this._SchemaProvider.createTable(pMeadowTableSchema, fCallback);
+	}
+
+	getIndexDefinitionsFromSchema(pMeadowTableSchema)
+	{
+		return this._SchemaProvider.getIndexDefinitionsFromSchema(pMeadowTableSchema);
+	}
+
+	generateCreateIndexScript(pMeadowTableSchema)
+	{
+		return this._SchemaProvider.generateCreateIndexScript(pMeadowTableSchema);
+	}
+
+	generateCreateIndexStatements(pMeadowTableSchema)
+	{
+		return this._SchemaProvider.generateCreateIndexStatements(pMeadowTableSchema);
+	}
+
+	createIndex(pIndexStatement, fCallback)
+	{
+		return this._SchemaProvider.createIndex(pIndexStatement, fCallback);
+	}
+
+	createIndices(pMeadowTableSchema, fCallback)
+	{
+		return this._SchemaProvider.createIndices(pMeadowTableSchema, fCallback);
+	}
+
+	createAllIndices(pMeadowSchema, fCallback)
+	{
+		return this._SchemaProvider.createAllIndices(pMeadowSchema, fCallback);
+	}
+
+	// Database Introspection delegation
+
+	listTables(fCallback)
+	{
+		return this._SchemaProvider.listTables(fCallback);
+	}
+
+	introspectTableColumns(pTableName, fCallback)
+	{
+		return this._SchemaProvider.introspectTableColumns(pTableName, fCallback);
+	}
+
+	introspectTableIndices(pTableName, fCallback)
+	{
+		return this._SchemaProvider.introspectTableIndices(pTableName, fCallback);
+	}
+
+	introspectTableForeignKeys(pTableName, fCallback)
+	{
+		return this._SchemaProvider.introspectTableForeignKeys(pTableName, fCallback);
+	}
+
+	introspectTableSchema(pTableName, fCallback)
+	{
+		return this._SchemaProvider.introspectTableSchema(pTableName, fCallback);
+	}
+
+	introspectDatabaseSchema(fCallback)
+	{
+		return this._SchemaProvider.introspectDatabaseSchema(fCallback);
+	}
+
+	generateMeadowPackageFromTable(pTableName, fCallback)
+	{
+		return this._SchemaProvider.generateMeadowPackageFromTable(pTableName, fCallback);
 	}
 
 	connect()
@@ -212,6 +191,7 @@ class MeadowConnectionPostgreSQL extends libFableServiceProviderBase
 		{
 			this.fable.log.info(`Meadow-Connection-PostgreSQL connecting to [${this.options.PostgreSQL.host} : ${this.options.PostgreSQL.port}] as ${this.options.PostgreSQL.user} for database ${this.options.PostgreSQL.database} at a pool limit of ${this.options.PostgreSQL.max}`);
 			this._ConnectionPool = new libPG.Pool(tmpConnectionSettings);
+			this._SchemaProvider.setConnectionPool(this._ConnectionPool);
 			this.connected = true;
 		}
 	}
