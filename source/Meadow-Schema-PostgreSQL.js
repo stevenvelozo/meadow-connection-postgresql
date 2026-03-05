@@ -93,6 +93,12 @@ class MeadowSchemaPostgreSQL extends libFableServiceProviderBase
 				case 'Boolean':
 					tmpCreateTableStatement += `        "${tmpColumn.Column}" BOOLEAN NOT NULL DEFAULT false`;
 					break;
+				case 'JSON':
+					tmpCreateTableStatement += `        "${tmpColumn.Column}" TEXT`;
+					break;
+				case 'JSONProxy':
+					tmpCreateTableStatement += `        "${tmpColumn.StorageColumn}" TEXT`;
+					break;
 				default:
 					break;
 			}
@@ -952,6 +958,8 @@ class MeadowSchemaPostgreSQL extends libFableServiceProviderBase
 			case 'Text': return 'String';
 			case 'DateTime': return 'DateTime';
 			case 'Boolean': return 'Boolean';
+			case 'JSON': return 'JSON';
+			case 'JSONProxy': return 'JSONProxy';
 			default: return 'String';
 		}
 	}
@@ -975,6 +983,8 @@ class MeadowSchemaPostgreSQL extends libFableServiceProviderBase
 			case 'Text': return '';
 			case 'DateTime': return '';
 			case 'Boolean': return false;
+			case 'JSON': return {};
+			case 'JSONProxy': return {};
 			default: return '';
 		}
 	}
