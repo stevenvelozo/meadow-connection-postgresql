@@ -1,5 +1,5 @@
 {
-	"Generated": "2026-03-02T00:47:16.544Z",
+	"Generated": "2026-04-09T23:23:31.822Z",
 	"GitHubOrg": "stevenvelozo",
 	"DefaultBranch": "master",
 	"Groups": [
@@ -55,6 +55,23 @@
 					"DocFiles": [
 						"css/docuserve.css"
 					]
+				}
+			]
+		},
+		{
+			"Name": "Test",
+			"Key": "test",
+			"Description": "",
+			"Modules": [
+				{
+					"Name": "docker-init",
+					"Repo": "docker-init",
+					"Group": "test",
+					"Branch": "master",
+					"HasDocs": false,
+					"HasCover": false,
+					"Sidebar": [],
+					"DocFiles": []
 				}
 			]
 		}
