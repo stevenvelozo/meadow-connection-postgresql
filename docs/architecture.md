@@ -40,7 +40,7 @@ sequenceDiagram
 	Fable->>MCP: constructor(fable, options)
 	MCP->>MCP: Read PostgreSQL config
 	MCP->>MCP: Normalize property names
-	Note over MCP: Server→host, Port→port, etc.
+	Note over MCP: Server->host, Port->port, etc.
 
 	alt Auto-Connect Enabled
 		MCP->>MCP: connect()
@@ -103,7 +103,7 @@ flowchart LR
 		SET[fable.settings.PostgreSQL]
 	end
 	subgraph Normalization
-		NORM["Property Mapping<br/>Server → host<br/>Port → port<br/>User → user<br/>Password → password<br/>Database → database<br/>ConnectionPoolLimit → max"]
+		NORM["Property Mapping<br/>Server -> host<br/>Port -> port<br/>User -> user<br/>Password -> password<br/>Database -> database<br/>ConnectionPoolLimit -> max"]
 	end
 	subgraph Output
 		PGPOOL["pg.Pool Config<br/>{ host, port, user,<br/>  password, database, max }"]
