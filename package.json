@@ -45,7 +45,7 @@
   "homepage": "https://github.com/stevenvelozo/meadow-connection-postgresql",
   "devDependencies": {
     "fable": "^3.1.55",
-    "quackage": "^1.0.58"
+    "quackage": "^1.1.0"
   },
   "dependencies": {
     "fable-serviceproviderbase": "^3.0.18",
