@@ -1,7 +1,5 @@
 # meadow-connection-postgresql
 
-<small>v1.0.0</small>
-
 > PostgreSQL connection service for the Meadow data access layer
 
 - **Fable Service Provider** -- seamless dependency injection integration

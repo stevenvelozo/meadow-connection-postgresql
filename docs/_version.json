@@ -1,0 +1,7 @@
+{
+	"Name": "meadow-connection-postgresql",
+	"Version": "1.0.2",
+	"Description": "Meadow PostgreSQL Connection Plugin",
+	"GeneratedAt": "2026-04-10T01:49:49.504Z",
+	"GitCommit": "85f6491"
+}
