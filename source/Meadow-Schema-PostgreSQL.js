@@ -39,7 +39,7 @@ class MeadowSchemaPostgreSQL extends libFableServiceProviderBase
 
 	generateCreateTableStatement(pMeadowTableSchema)
 	{
-		this.log.info(`--> Building the table create string for ${pMeadowTableSchema} ...`);
+		this.log.info(`--> Building the table create string for ${pMeadowTableSchema && pMeadowTableSchema.TableName ? pMeadowTableSchema.TableName : '(unknown)'} ...`);
 
 		let tmpPrimaryKey = false;
 		let tmpCreateTableStatement = `--   [ ${pMeadowTableSchema.TableName} ]`;
