@@ -64,11 +64,15 @@ class MeadowSchemaPostgreSQL extends libFableServiceProviderBase
 					tmpPrimaryKey = tmpColumn.Column;
 					break;
 				case 'GUID':
-					let tmpSize = tmpColumn.hasOwnProperty('Size') ? tmpColumn.Size : 36;
+					// Default GUID column width is 255 — UUIDs need 36 but
+					// composite GUIDs from integration adapters (meadow-
+					// integration's prefix + entity + external GUID) often
+					// exceed 36. Wider default avoids silent truncation
+					// when the descriptor doesn't pin a Size.
+					let tmpSize = tmpColumn.hasOwnProperty('Size') ? tmpColumn.Size : 255;
 					if (isNaN(tmpSize))
 					{
-						// Use the old default if Size is improper
-						tmpSize = 36;
+						tmpSize = 255;
 					}
 					tmpCreateTableStatement += `        "${tmpColumn.Column}" VARCHAR(${tmpSize}) DEFAULT '0xDe'`;
 					break;
