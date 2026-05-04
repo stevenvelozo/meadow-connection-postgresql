@@ -1,6 +1,6 @@
 {
   "name": "meadow-connection-postgresql",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Meadow PostgreSQL Connection Plugin",
   "main": "source/Meadow-Connection-PostgreSQL.js",
   "scripts": {
