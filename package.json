@@ -44,12 +44,12 @@
   },
   "homepage": "https://github.com/stevenvelozo/meadow-connection-postgresql",
   "devDependencies": {
-    "fable": "^3.1.55",
-    "pict-docuserve": "^0.1.5",
-    "quackage": "^1.1.0"
+    "fable": "^3.1.72",
+    "pict-docuserve": "^1.0.1",
+    "quackage": "^1.2.3"
   },
   "dependencies": {
-    "fable-serviceproviderbase": "^3.0.18",
+    "fable-serviceproviderbase": "^3.0.19",
     "pg": "^8.13.0"
   }
 }
